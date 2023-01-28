@@ -1,5 +1,10 @@
 import requests
 import selectorlib
+from message import send_email
+import time
+
+"INSERT INTO events VALUES ('Tigers', 'Tiger City', '2088.10.14')"
+"SELECT * FROM events WHERE date='2088.10.15'"
 
 URL = "http://programmer100.pythonanywhere.com/tours/"
 
@@ -22,10 +27,6 @@ def extract(source):
     return value
 
 
-def send_email():
-    print("Email was sent!")
-
-
 def store(extracted):
     with open("data.txt", "a") as file:
         file.write(extracted + "\n")
@@ -37,11 +38,13 @@ def read(extracted):
 
 
 if __name__ == "__main__":
-    scraped = scrape(URL)
-    extracted = extract(scraped)
-    print(extracted)
-    content = read(extracted)
-    if extracted != "No upcoming tours":
-        if extracted not in content:
-            store(extracted)
-            send_email()
+    while True:
+        scraped = scrape(URL)
+        extracted = extract(scraped)
+        print(extracted)
+        content = read(extracted)
+        if extracted != "No upcoming tours":
+            if extracted not in content:
+                store(extracted)
+                send_email(message="Hey, a new event was found!")
+        time.sleep(5)
